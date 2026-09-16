@@ -1,11 +1,18 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 
 function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-
+  const { user, logout } = useAuth();
   const isDark = theme === "dark";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const linkStyle = (path) => ({
     color: location.pathname === path ? "#58a6ff" : isDark ? "white" : "#333",
@@ -49,6 +56,31 @@ function Layout() {
           <Link to="/products" style={linkStyle("/products")}>
             Products
           </Link>
+          <Link to="/dashboard" style={linkStyle("/dashboard")}>
+            Dashboard
+          </Link>
+        </div>
+
+        <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "8px 16px",
+                background: "#e53e3e",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              logout({user.name})
+            </button>
+          ) : (
+            <Link to="/login" style={linkStyle("/login")}>
+              Login
+            </Link>
+          )}
         </div>
 
         <button
